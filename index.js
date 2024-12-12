@@ -22,8 +22,8 @@ app.use('/api/v2/boardgames', boardgameRoutes);
 app.use('/api/v2/events', eventRoutes);
 
 // Database Connection
-const PORT = process.env.PORT || 3000;
-const DB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/boardgames';
+
+const DB_URI = process.env.DATABASE_URL || 'mongodb://localhost:27017/boardgames';
 
 
 mongoose.connect(DB_URI)
@@ -32,8 +32,8 @@ mongoose.connect(DB_URI)
 
 
 // Starting the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(3000, () => {
+    console.log('Server is running...');
 });
 
 module.exports = app;
