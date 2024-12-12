@@ -1,4 +1,3 @@
-
 const Boardgame = require('../models/Boardgame');
 
 // Get All Boardgames
@@ -14,11 +13,16 @@ exports.getAllBoardgames = async (req, res) => {
 // Add a Boardgame
 exports.addBoardgame = async (req, res) => {
     try {
-        const newBoardgame = new Boardgame(req.body);
-        await newBoardgame.save();
-        res.status(201).json(newBoardgame);
+        const images = req.files.map(file => file.path); // Obtén las URLs desde Cloudinary
+
+        const boardgame = await Boardgame.create({
+            ...req.body,
+            images: images // Guarda las URLs en el campo `images`
+        });
+
+        res.status(201).json({ message: 'Boardgame created successfully!', boardgame });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -27,6 +31,13 @@ exports.updateBoardgame = async (req, res) => {
     try {
         const boardgameId = req.params.id;
         const updates = req.body;
+
+        // Si se subieron nuevas imágenes, inclúyelas en la actualización
+        if (req.files) {
+            const images = req.files.map(file => file.path);
+            updates.images = images;
+        }
+
         const updatedBoardgame = await Boardgame.findByIdAndUpdate(boardgameId, updates, { new: true });
         res.status(200).json({ message: 'Boardgame updated successfully', updatedBoardgame });
     } catch (error) {
