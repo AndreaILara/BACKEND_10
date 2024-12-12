@@ -7,9 +7,9 @@ dotenv.config();
 
 const seedBoardgames = async () => {
     const boardgames = [
-        { title: 'Catan', releaseYear: 1995, minPlayers: 3, maxPlayers: 4, rating: 8.1, price: 45 },
-        { title: 'Carcassonne', releaseYear: 2000, minPlayers: 2, maxPlayers: 5, rating: 7.4, price: 35 },
-        { title: 'Pandemic', releaseYear: 2008, minPlayers: 2, maxPlayers: 4, rating: 8.6, price: 50 },
+        { title: 'Virus!', releaseYear: 2015, minPlayers: 2, maxPlayers: 6, rating: 6.7, price: 25 },
+        { title: 'UNO', releaseYear: 1971, minPlayers: 2, maxPlayers: 10, rating: 5.5, price: 10 },
+        { title: 'Guess Who?', releaseYear: 2001, minPlayers: 2, maxPlayers: 2, rating: 4.8, price: 16 },
     ];
 
     try {
