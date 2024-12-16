@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/v2', (req, res) => {
-    res.status(200).json({ message: 'Welcome to the API v2!' });
+    res.status(200).json({ message: 'Welcome to the API Boardgames!' });
 });
 
 // Routes
