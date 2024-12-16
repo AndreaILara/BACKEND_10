@@ -16,6 +16,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/api/v2', (req, res) => {
+    res.status(200).json({ message: 'Welcome to the API v2!' });
+});
+
 // Routes
 app.use('/api/v2/users', userRoutes);
 app.use('/api/v2/boardgames', boardgameRoutes);
