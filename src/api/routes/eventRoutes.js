@@ -1,12 +1,13 @@
 
 const express = require('express');
-const { getAllEvents, createEvent, updateEvent, deleteEvent } = require('../controllers/eventController');
+const { getAllEvents, getEventById, createEvent, updateEvent, deleteEvent } = require('../controllers/eventController');
 const { authenticate, authorize } = require('../../middlewares/auth');
 
 const router = express.Router();
 
 // Public Routes
 router.get('/', getAllEvents);
+router.get('/:id', getEventById);
 
 // Protected Routes
 router.post('/', authenticate, createEvent);

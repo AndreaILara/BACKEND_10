@@ -11,6 +11,21 @@ exports.getAllEvents = async (req, res) => {
     }
 };
 
+exports.getEventById = async (req, res) => {
+    try {
+        const eventId = req.params.id; // Extrae el ID desde la URL
+        const event = await Event.findById(eventId).populate('attendees games organizer');
+
+        if (!event) {
+            return res.status(404).json({ message: 'Event not found' });
+        }
+
+        res.status(200).json(event);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 // Create an Event
 exports.createEvent = async (req, res) => {
     try {
