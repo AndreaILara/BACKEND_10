@@ -6,7 +6,7 @@ const { authenticate, authorize } = require('../../middlewares/auth');
 const router = express.Router();
 
 
-router.get('/events', getAllEvents);
+router.get('/', getAllEvents);
 router.get('/:id', getEventById);
 
 
