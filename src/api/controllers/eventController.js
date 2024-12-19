@@ -1,16 +1,15 @@
 
 const Event = require('../models/Event');
 
-// Get All Events
 exports.getAllEvents = async (req, res) => {
     try {
         const events = await Event.find()
             .populate({
                 path: 'games',
-                select: 'title img' // Selecciona solo las propiedades 'title' y 'img'
+                select: 'title img' // Asegura que las imágenes sean devueltas
             })
-            .populate('attendees', 'username') // Trae el nombre de usuario de los asistentes
-            .populate('organizer', 'username'); // Trae el nombre de usuario del organizador
+            .populate('attendees', 'username') // Solo nombre de usuarios asistentes
+            .populate('organizer', 'username'); // Nombre del organizador
 
         res.status(200).json(events);
     } catch (error) {

@@ -1,11 +1,14 @@
 const Boardgame = require('../models/Boardgame');
 
-// Get All Boardgames
 exports.getAllBoardgames = async (req, res) => {
     try {
+        // Busca todos los juegos en la colección
         const boardgames = await Boardgame.find();
+
+        // Responde con los datos encontrados y un código de estado 200
         res.status(200).json(boardgames);
     } catch (error) {
+        // Si ocurre algún error, responde con un código de estado 500 y el mensaje del error
         res.status(500).json({ error: error.message });
     }
 };
