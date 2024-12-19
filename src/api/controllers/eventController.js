@@ -6,10 +6,10 @@ exports.getAllEvents = async (req, res) => {
         const events = await Event.find()
             .populate({
                 path: 'games',
-                select: 'title img' // Asegura que las imágenes sean devueltas
+                select: 'title img'
             })
-            .populate('attendees', 'username') // Solo nombre de usuarios asistentes
-            .populate('organizer', 'username'); // Nombre del organizador
+            .populate('attendees', 'username')
+            .populate('organizer', 'username');
 
         res.status(200).json(events);
     } catch (error) {
@@ -19,7 +19,7 @@ exports.getAllEvents = async (req, res) => {
 
 exports.getEventById = async (req, res) => {
     try {
-        const eventId = req.params.id; // Extrae el ID desde la URL
+        const eventId = req.params.id;
         const event = await Event.findById(eventId).populate('attendees games organizer');
 
         if (!event) {
@@ -32,7 +32,7 @@ exports.getEventById = async (req, res) => {
     }
 };
 
-// Create an Event
+
 exports.createEvent = async (req, res) => {
     try {
         const newEvent = new Event({ ...req.body, organizer: req.user.id });
@@ -43,7 +43,7 @@ exports.createEvent = async (req, res) => {
     }
 };
 
-// Update an Event
+
 exports.updateEvent = async (req, res) => {
     try {
         const eventId = req.params.id;
@@ -55,7 +55,7 @@ exports.updateEvent = async (req, res) => {
     }
 };
 
-// Delete an Event
+
 exports.deleteEvent = async (req, res) => {
     try {
         const eventId = req.params.id;

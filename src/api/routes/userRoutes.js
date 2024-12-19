@@ -5,11 +5,11 @@ const { authenticate, authorize } = require('../../middlewares/auth');
 
 const router = express.Router();
 
-// Public Routes
+
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-// Protected Routes
+
 router.get('/', authenticate, authorize('admin'), getAllUsers);
 router.put('/:id', authenticate, updateUser);
 router.delete('/:id', authenticate, deleteUser);

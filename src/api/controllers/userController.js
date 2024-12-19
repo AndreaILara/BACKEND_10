@@ -3,7 +3,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('../../config/jwt');
 
-// Register User
+
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -16,7 +16,7 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-// Login User
+
 exports.loginUser = async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -31,7 +31,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-// Get All Users
+
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password').populate('favoriteGames');
@@ -41,7 +41,7 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-// Update User
+
 exports.updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -56,7 +56,7 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-// Delete User
+
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
