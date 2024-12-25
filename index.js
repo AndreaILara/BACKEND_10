@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 // Configuración de CORS
-const allowedOrigins = ['https://backend-kappa-rust-60.vercel.app'];
+const allowedOrigins = ['https://frontend-10.vercel.app/'];
 
 app.use(cors({
     origin: allowedOrigins,
