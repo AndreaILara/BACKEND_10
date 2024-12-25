@@ -6,7 +6,7 @@ exports.getAllEvents = async (req, res) => {
         const events = await Event.find()
             .populate({
                 path: 'games',
-                select: 'title img'
+                select: 'images title'
             })
             .populate('attendees', 'username')
             .populate('organizer', 'username');
@@ -35,14 +35,18 @@ exports.getEventById = async (req, res) => {
 
 exports.createEvent = async (req, res) => {
     try {
-        const newEvent = new Event({ ...req.body, organizer: req.user.id });
-        await newEvent.save();
-        res.status(201).json(newEvent);
+        const newEvent = new Event(req.body);
+        const savedEvent = await newEvent.save();
+
+        const populatedEvent = await Event.findById(savedEvent._id)
+            .populate('games', 'title images') // Ajusta los campos que necesitas
+            .populate('organizer', 'username');
+
+        res.status(201).json({ message: 'Event created successfully', populatedEvent });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-
 
 exports.updateEvent = async (req, res) => {
     try {
