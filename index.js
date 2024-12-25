@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 // Configuración de CORS
-const allowedOrigins = ['https://frontend-10.vercel.app/'];
+const allowedOrigins = ['https://frontend-10.vercel.app', 'http://localhost:5173'];
 
 app.use(cors({
     origin: allowedOrigins,
