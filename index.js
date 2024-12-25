@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -11,8 +10,16 @@ dotenv.config();
 
 const app = express();
 
+// Configuración de CORS
+const allowedOrigins = ['https://backend-kappa-rust-60.vercel.app'];
+
+app.use(cors({
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
 // Middleware
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -26,14 +33,11 @@ app.use('/api/v2/boardgames', boardgameRoutes);
 app.use('/api/v2/events', eventRoutes);
 
 // Database Connection
-
 const DB_URI = process.env.DATABASE_URL || 'mongodb://localhost:27017/boardgames';
-
 
 mongoose.connect(DB_URI)
     .then(() => console.log('Connected to MongoDB successfully!'))
     .catch((error) => console.error('Error connecting to MongoDB:', error));
-
 
 // Starting the server
 app.listen(3000, () => {
