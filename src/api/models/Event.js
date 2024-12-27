@@ -7,7 +7,7 @@ const eventSchema = new mongoose.Schema({
     location: { type: String },
     attendees: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     games: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Boardgame' }],
-    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
+    organizer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Event', eventSchema);
