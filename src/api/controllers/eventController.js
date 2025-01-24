@@ -5,7 +5,7 @@ const Event = require('../models/Event');
 exports.getAllEvents = async (req, res) => {
     try {
         const events = await Event.find()
-            .populate('organizer', '_id username') // Asegúrate de popular el ID y otros campos necesarios
+            .populate('organizer', '_id username')
             .populate('games', 'title images');
 
         res.status(200).json(events);
@@ -35,7 +35,7 @@ exports.createEvent = async (req, res) => {
     try {
         const { name, date, location, games, organizer } = req.body;
 
-        // Asignar el usuario autenticado como organizador si no se especifica uno
+
         const eventOrganizer = organizer || req.user.id;
 
         const newEvent = new Event({
@@ -69,16 +69,16 @@ exports.updateEvent = async (req, res) => {
             return res.status(404).json({ message: 'Evento no encontrado.' });
         }
 
-        // Filtra los asistentes nulos para prevenir errores
+
         event.attendees = event.attendees.filter(id => id !== null);
 
         if (action === 'add') {
-            // Agrega el usuario solo si no está ya en la lista
+
             if (!event.attendees.some(id => id.toString() === userId)) {
                 event.attendees.push(userId);
             }
         } else if (action === 'remove') {
-            // Elimina al usuario del array
+
             event.attendees = event.attendees.filter(id => id.toString() !== userId);
         } else {
             return res.status(400).json({ message: 'Acción inválida.' });
@@ -87,7 +87,7 @@ exports.updateEvent = async (req, res) => {
         await event.save();
 
         const updatedEvent = await Event.findById(eventId)
-            .populate('attendees', '_id username') // Devuelve los asistentes con ID y username
+            .populate('attendees', '_id username')
             .populate('games', 'title images');
 
         res.status(200).json({ updatedEvent });

@@ -10,7 +10,7 @@ dotenv.config();
 
 const app = express();
 
-// Configuración de CORS
+
 const allowedOrigins = ['https://frontend-10.vercel.app', 'http://localhost:5173'];
 
 app.use(cors({
@@ -39,7 +39,7 @@ mongoose.connect(DB_URI)
     .then(() => console.log('Connected to MongoDB successfully!'))
     .catch((error) => console.error('Error connecting to MongoDB:', error));
 
-// Starting the server
+
 app.listen(3000, () => {
     console.log('Server is running...');
 });

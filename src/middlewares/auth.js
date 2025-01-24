@@ -13,10 +13,9 @@ const authenticate = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = {
-            id: decoded.id, // ID del usuario
-            role: decoded.role // Rol del usuario
+            id: decoded.id,
+            role: decoded.role
         };
-        console.log('Token decodificado:', req.user); // Log del token decodificado
         next();
     } catch (error) {
         console.error('Error al verificar el token:', error);
