@@ -3,16 +3,27 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('../../config/jwt');
 
-
 exports.registerUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
+        // Crear el nuevo usuario
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ username, email, password: hashedPassword });
         await user.save();
-        res.status(201).json(user);
+
+        res.status(201).json({ message: 'Usuario registrado exitosamente.' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (error.code === 11000) {
+            const field = Object.keys(error.keyValue)[0]; // Campo duplicado (username o email)
+            return res.status(409).json({
+                message: `El ${field} ya está en uso. Por favor, elige otro.`,
+            });
+        }
+
+        // Otros errores
+        console.error('Error al registrar usuario:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };
 
@@ -60,9 +71,20 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
+
+        // Verificar si el usuario tiene permiso para eliminar la cuenta
+        if (req.user.role !== 'admin' && req.user.id !== userId) {
+            return res.status(403).json({ message: 'No tienes permiso para eliminar esta cuenta.' });
+        }
+
         const deletedUser = await User.findByIdAndDelete(userId);
-        res.status(200).json({ message: 'User deleted', deletedUser });
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        res.status(200).json({ message: 'Cuenta eliminada con éxito.', deletedUser });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error al eliminar usuario:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
     }
 };

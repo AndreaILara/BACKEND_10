@@ -16,19 +16,20 @@ exports.getAllBoardgames = async (req, res) => {
 
 exports.addBoardgame = async (req, res) => {
     try {
-        const images = req.files.map(file => file.path);
+        // Verifica que `req.files` exista antes de mapearlo
+        const images = req.files?.map(file => file.path) || [];
 
         const boardgame = await Boardgame.create({
             ...req.body,
-            images: images
+            images: images // Asigna un array vacío si no hay imágenes
         });
 
         res.status(201).json({ message: 'Boardgame created successfully!', boardgame });
     } catch (error) {
+        console.error('Error al crear el juego:', error);
         res.status(500).json({ error: error.message });
     }
 };
-
 
 exports.updateBoardgame = async (req, res) => {
     try {

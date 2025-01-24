@@ -12,6 +12,7 @@ router.get('/:id', getEventById);
 
 router.post('/', authenticate, createEvent);
 router.put('/:id', authenticate, updateEvent);
-router.delete('/:id', authenticate, authorize('admin', 'organizer'), deleteEvent);
+router.delete('/:id', authenticate, deleteEvent);
+
 
 module.exports = router;

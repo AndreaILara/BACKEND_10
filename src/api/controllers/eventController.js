@@ -1,19 +1,17 @@
 
 const Event = require('../models/Event');
 
+
 exports.getAllEvents = async (req, res) => {
     try {
         const events = await Event.find()
-            .populate({
-                path: 'games',
-                select: 'images title'
-            })
-            .populate('attendees', 'username')
-            .populate('organizer', 'username');
+            .populate('organizer', '_id username') // Asegúrate de popular el ID y otros campos necesarios
+            .populate('games', 'title images');
 
         res.status(200).json(events);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error al obtener eventos:', error);
+        res.status(500).json({ error: 'Error interno del servidor.' });
     }
 };
 
@@ -35,14 +33,26 @@ exports.getEventById = async (req, res) => {
 
 exports.createEvent = async (req, res) => {
     try {
-        const newEvent = new Event(req.body);
+        const { name, date, location, games, organizer } = req.body;
+
+        // Asignar el usuario autenticado como organizador si no se especifica uno
+        const eventOrganizer = organizer || req.user.id;
+
+        const newEvent = new Event({
+            name,
+            date,
+            location,
+            games,
+            organizer: eventOrganizer,
+        });
+
         const savedEvent = await newEvent.save();
 
         const populatedEvent = await Event.findById(savedEvent._id)
-            .populate('games', 'title images') // Ajusta los campos que necesitas
+            .populate('games', 'title images')
             .populate('organizer', 'username');
 
-        res.status(201).json({ message: 'Event created successfully', populatedEvent });
+        res.status(201).json({ message: 'Evento creado exitosamente.', populatedEvent });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -50,22 +60,71 @@ exports.createEvent = async (req, res) => {
 
 exports.updateEvent = async (req, res) => {
     try {
+        const { action, userId } = req.body;
         const eventId = req.params.id;
-        const updates = req.body;
-        const updatedEvent = await Event.findByIdAndUpdate(eventId, updates, { new: true }).populate('attendees games organizer');
-        res.status(200).json({ message: 'Event updated successfully', updatedEvent });
+
+        const event = await Event.findById(eventId);
+
+        if (!event) {
+            return res.status(404).json({ message: 'Evento no encontrado.' });
+        }
+
+        // Filtra los asistentes nulos para prevenir errores
+        event.attendees = event.attendees.filter(id => id !== null);
+
+        if (action === 'add') {
+            // Agrega el usuario solo si no está ya en la lista
+            if (!event.attendees.some(id => id.toString() === userId)) {
+                event.attendees.push(userId);
+            }
+        } else if (action === 'remove') {
+            // Elimina al usuario del array
+            event.attendees = event.attendees.filter(id => id.toString() !== userId);
+        } else {
+            return res.status(400).json({ message: 'Acción inválida.' });
+        }
+
+        await event.save();
+
+        const updatedEvent = await Event.findById(eventId)
+            .populate('attendees', '_id username') // Devuelve los asistentes con ID y username
+            .populate('games', 'title images');
+
+        res.status(200).json({ updatedEvent });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.error('Error al actualizar el evento:', error);
+        res.status(500).json({ error: error.message });
     }
 };
 
-
 exports.deleteEvent = async (req, res) => {
+    console.log('deleteEvent ejecutado');
     try {
         const eventId = req.params.id;
+        console.log('ID del evento a eliminar:', eventId);
+
+        const event = await Event.findById(eventId);
+
+        if (!event) {
+            console.log('Evento no encontrado');
+            return res.status(404).json({ message: 'Evento no encontrado.' });
+        }
+
+        console.log('Evento encontrado:', event);
+        console.log('Usuario autenticado:', req.user);
+        console.log('Organizador del evento:', event.organizer.toString());
+
+        if (req.user.role !== 'admin' && req.user.id !== event.organizer.toString()) {
+            console.log('Acceso denegado. Usuario no autorizado para eliminar este evento.');
+            return res.status(403).json({ message: 'No tienes permiso para eliminar este evento.' });
+        }
+
         const deletedEvent = await Event.findByIdAndDelete(eventId);
-        res.status(200).json({ message: 'Event deleted', deletedEvent });
+        console.log('Evento eliminado:', deletedEvent);
+
+        res.status(200).json({ message: 'Evento eliminado correctamente.', deletedEvent });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error en deleteEvent:', error);
+        res.status(500).json({ error: 'Error interno del servidor.' });
     }
 };
